@@ -11,5 +11,5 @@ After a hard time on the CTF, you finally find something that seemed very simple
 ## Comand
 cargo test
 
-## test
+## Test and Solve
 You may only test your circuit by upload the fib.rs

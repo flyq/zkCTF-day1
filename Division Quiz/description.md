@@ -15,6 +15,6 @@ cargo run
 Input 10 3 3
 Explain: Proof generates and verifier passes it. It is an U8 division
 
-## For contest organizer
-Run it to generate 10 or more data points for test scoring
-Remove main.rs because it gives an alternative answer to quiz
+## Solve
+Sumbit quiz.rs to solve the puzzle.
+

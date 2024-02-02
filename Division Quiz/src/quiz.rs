@@ -76,8 +76,9 @@ impl<F: Field> DivChip<F> {
         meta.enable_equality(col_k);
         meta.enable_equality(instance);
 
-        /* Implement your constraints here */
+        ///////////////////////// Please implement code here /////////////////////////
         unimplemented!();
+        ///////////////////////// End implement /////////////////////////
 
         DivConfig {
             a: col_a,
@@ -94,8 +95,11 @@ impl<F: Field> DivChip<F> {
     // Assign range for U8 range check
     pub fn assign_range(&self, mut layouter: impl Layouter<F>) -> Result<(), Error> {
         let config = &self.config;
-        // Assign range
+
+        ///////////////////////// Please implement code here /////////////////////////
         unimplemented!();
+        ///////////////////////// End implement /////////////////////////
+
         Ok(())
     }
 
@@ -108,8 +112,10 @@ impl<F: Field> DivChip<F> {
         c: F,
     ) -> Result<AssignedCell<F, F>, Error> {
         let config = &self.config;
-        // Assign witness
-        unimplemented!()
+
+        ///////////////////////// Please implement code here /////////////////////////
+        unimplemented!();
+        ///////////////////////// End implement /////////////////////////
     }
 
     pub fn expose_public(
