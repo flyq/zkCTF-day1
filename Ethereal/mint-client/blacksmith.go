@@ -3,6 +3,7 @@ package main
 import (
 	"crypto"
 	"encoding/binary"
+	"fmt"
 	"math/big"
 	"time"
 
@@ -13,7 +14,7 @@ import (
 )
 
 func ForgeSword() []fr.Element {
-	f := make([]fr.Element, 10)
+	f := make([]fr.Element, 17)
 	h := crypto.SHA256.New()
 	ts := time.Now().UnixNano()
 	tsB := make([]byte, 8)
@@ -21,7 +22,7 @@ func ForgeSword() []fr.Element {
 	h.Write(tsB)
 	h.Write([]byte("Soul of a Hero"))
 	seed := h.Sum(nil)
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 17; i++ {
 		f[i].SetBytes(seed[:32])
 		h.Reset()
 		h.Write(seed)
@@ -47,6 +48,7 @@ func CraftBladeSignature(poly []fr.Element, srs *kzg.SRS) (kzg.Digest, *KeyPairP
 	// compute opening proof at a random point
 	var point fr.Element
 	point.SetInt64(0)
+	fmt.Println("point: ", point.String())
 	proof, err := kzg.Open(poly, point, srs.Pk)
 	if err != nil {
 		panic(err)

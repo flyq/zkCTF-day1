@@ -4,9 +4,9 @@ pragma circom 2.0.0;
 // log_5(21888242871839275222246405745257275088548364400416034343698204186575808495617) ~= 110
 // => nRounds should be 220
 template MiMCSponge(nInputs, nRounds, nOutputs) {
-  signal input ins[nInputs];
+  signal input ins[nInputs]; //1
   signal input k;
-  signal output outs[nOutputs];
+  signal output outs[nOutputs]; //1
 
   var i;
 

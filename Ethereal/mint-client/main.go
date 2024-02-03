@@ -23,7 +23,7 @@ var (
 )
 
 const (
-	SRS_SIZE = 16
+	SRS_SIZE = 17
 )
 
 func panicErr(err error) {
@@ -107,10 +107,15 @@ func main() {
 	var action = flag.String("action", "register", "action to perform")
 	var contractAddr = flag.String("contract", "", "contract address")
 	var rpcAddr = flag.String("rpc", "http://47.76.89.7:8545", "rpc address")
+	// var rpcAddr = flag.String("rpc", "http://127.0.0.1:8545", "rpc address")
 	// --------------------------------------------------
 	// Note: Please change the account and pk to your own
-	var accountAddr = flag.String("account", "0x9B933744a0cd5d672d86e13062372838C0Ed31D5", "account address")
-	var privateKey = flag.String("pk", "b31b74652ebf167029b0c3265af7e2fe1094cc1cf75a954ece2e2cb2619bbf71", "private key")
+	var accountAddr = flag.String("account", "0x78B8Af83b0DEF7e7f89Cd964f9E3921F9685844b", "account address")
+	var privateKey = flag.String("pk", "e5e8bb4e61f5afe8bf82afec48adf1a5ddd799f042b1c71d3fe5cf26f7f00c31", "private key")
+
+	// var accountAddr = flag.String("account", "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "account address")
+	// var privateKey = flag.String("pk", "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80", "private key")
+
 	// --------------------------------------------------
 	flag.Parse()
 	contractAddress := common.HexToAddress(*contractAddr)
@@ -125,20 +130,23 @@ func main() {
 
 	switch *action {
 	case "register":
-		sword := ForgeSword()
+		var sword []fr.Element
+		f, err := os.Open("sword.json")
+		panicErr(err)
+		defer f.Close()
+		decoder := json.NewDecoder(f)
+		err = decoder.Decode(&sword)
+		panicErr(err)
+
 		bladeCommitment, bladeProof := CraftBladeSignature(sword, SRS)
 		commitmentPoint := G1AffineToG1Point(&bladeCommitment)
 		bladeProofPoint := G1AffineToG1Point(&bladeProof.H)
-		soulBox := G1AffineToG1Point(&bladeProof.PublicKeyG1Aff)
+		// soulBox := G1AffineToG1Point(&bladeProof.PublicKeyG1Aff)
+		publicKeyG2 := new(bn254.G1Affine)
+		soulBox := G1AffineToG1Point(publicKeyG2)
+		fmt.Println("PrivateKey", bladeProof.PrivateKey.String())
 		mintContract.Register(transactor, *commitmentPoint, *bladeProofPoint, *soulBox)
-		f, err := os.OpenFile("sword.json", os.O_CREATE|os.O_WRONLY, 0644)
-		panicErr(err)
-		defer f.Close()
-		f.Truncate(0)
-		f.Seek(0, 0)
-		encoder := json.NewEncoder(f)
-		encoder.SetIndent("", "  ")
-		encoder.Encode(sword)
+
 		transactor.Value = big.NewInt(0)
 	case "replay":
 		mintContract.Replay(transactor)
@@ -162,6 +170,10 @@ func main() {
 
 		var value big.Int
 		proof.ClaimedValue.BigInt(&value)
+		// fmt.Println("transactor", transactor)
+		// fmt.Println("proofPoint", proofPoint)
+		// fmt.Println("value", value.String())
+
 		mintContract.Mint(transactor, *proofPoint, &value)
 	case "query":
 		accountDeposit, err := mintContract.Deposits(nil, accountAddress)
